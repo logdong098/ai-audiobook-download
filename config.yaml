@@ -1,0 +1,53 @@
+# =======================================================
+# Hermes Audiobook Download (听书下载) 技能配置文件模板
+# 请复制本文件为 config.yaml 并根据实际环境调整配置
+# =======================================================
+
+# 听书文件保存的目标绝对路径
+# 支持 macOS/Linux (如 "~/Downloads/Audiobooks" 或 "/Volumes/NAS/Audiobooks")
+# 支持 Windows (如 "D:/Audiobooks" 或 "C:/Users/YourUsername/Audiobooks")
+# 默认保存到当前用户主目录下的 ~/Downloads/Audiobooks
+audiobook_dir: "~/Downloads/Audiobooks"
+
+# 保存工作模式:
+# - "folder" : 直接保存为整理好的规范有声书专辑文件夹（包含已写入有声标签的 .m4a/.mp3 音频文件与 playlist.m3u 播放列表，点击即可直接收听，默认推荐）
+# - "both"   : 既保留直接可听的音频目录，同时生成一份 .zip 归档备份
+# - "zip"    : 仅打包为单个 .zip 压缩包
+package_format: "folder"
+
+# 是否自动为音频文件写入 ID3/MP4 有声书标签 (书名、演播者、集数、音轨号)
+embed_metadata: true
+
+# 是否自动在小说目录下生成 .m3u 连续播放列表文件 (方便在 Mac/PC/播放器中直接双击连播全书)
+generate_m3u_playlist: true
+
+# 抓取频控与反爬防护参数
+# 针对恋听网等平台的连接频率保护（秒，推荐 1.5 - 2.5 秒，避免触发 IP 握手拦截）
+rate_limit_delay: 2.0
+
+# 失败重试次数（网络波动或遇到 TLS 限制时自动退避重试）
+max_retries: 5
+
+# 国内直连 IP 穿透配置
+# 用于在开启科学上网 / TUN 虚拟网卡 (Fake-IP) 环境下，强制直连国内阿里云机房，防止 TLS 握手失败 (SSL 错误 35)
+direct_ip: "47.238.53.179"
+auto_resolve_dns: true
+dns_servers:
+  - "223.5.5.5"
+  - "119.29.29.29"
+  - "114.114.114.114"
+
+# 默认最大下载集数限制 (防止误操作对数千集超长小说进行全本无限制下载)
+# 0 表示无限制（全本下载）；也可设为如 50、100
+default_max_chapters: 0
+
+# Telegram 独立 Bot 运行配置 (可选，若使用 Hermes Agent 调用则无需单独配置)
+telegram:
+  # Telegram Bot Token (若留空则自动读取 ~/.hermes/.env 中的 TELEGRAM_BOT_TOKEN)
+  bot_token: ""
+  # 允许交互的 Telegram 用户 ID 列表 (留空则允许任何人或由 Hermes 鉴权)
+  allowed_users: []
+  # 是否在下载完成后将音频文件通过 Telegram 原生音频播放器直接发送到聊天窗口中 (设置为 false 仅通知结果，不推送音频)
+  send_audio_to_chat: false
+  # 通过 Telegram 直接发送音频的最大集数限制 (防止批量推送几十条音频刷屏)
+  max_send_audio_episodes: 5
