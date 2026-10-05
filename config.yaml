@@ -1,11 +1,9 @@
 # =======================================================
-# Hermes Audiobook Download (听书下载) 技能配置文件模板
-# 请复制本文件为 config.yaml 并根据实际环境调整配置
+# Hermes Audiobook Download (多源听书下载) 技能配置文件
+# 支持喜马拉雅 FM、哔哩哔哩 (B站)、恋听网 (Ting55)
 # =======================================================
 
 # 听书文件保存的目标绝对路径
-# 支持 macOS/Linux (如 "~/Downloads/Audiobooks" 或 "/Volumes/NAS/Audiobooks")
-# 支持 Windows (如 "D:/Audiobooks" 或 "C:/Users/YourUsername/Audiobooks")
 # 默认保存到当前用户主目录下的 ~/Downloads/Audiobooks
 audiobook_dir: "~/Downloads/Audiobooks"
 
@@ -15,6 +13,22 @@ audiobook_dir: "~/Downloads/Audiobooks"
 # - "zip"    : 仅打包为单个 .zip 压缩包
 package_format: "folder"
 
+# 多源平台开关配置
+sources:
+  ximalaya: true   # 喜马拉雅 FM (优质官方/主播有声书，高保真 M4A 直链解析)
+  bilibili: true   # 哔哩哔哩 B站 (整本长篇广播剧、分P多人有声剧，yt-dlp 音轨提取)
+  ting55: true     # 恋听网 (传统在线有声书，内建国内 DNS 直连 IP 穿透)
+
+# 默认搜索聚合模式:
+# - "all"      : 同时聚合全部启用平台优质资源 (默认推荐)
+# - "ximalaya" : 仅检索喜马拉雅
+# - "bilibili" : 仅检索 B站
+# - "ting55"   : 仅检索恋听网
+default_search_source: "all"
+
+# yt-dlp 可执行程序路径 (用于 B 站音视频流解析)
+yt_dlp_path: "/opt/miniconda3/bin/yt-dlp"
+
 # 是否自动为音频文件写入 ID3/MP4 有声书标签 (书名、演播者、集数、音轨号)
 embed_metadata: true
 
@@ -22,14 +36,12 @@ embed_metadata: true
 generate_m3u_playlist: true
 
 # 抓取频控与反爬防护参数
-# 针对恋听网等平台的连接频率保护（秒，推荐 1.5 - 2.5 秒，避免触发 IP 握手拦截）
-rate_limit_delay: 2.0
+rate_limit_delay: 1.5
 
-# 失败重试次数（网络波动或遇到 TLS 限制时自动退避重试）
-max_retries: 5
+# 失败重试次数
+max_retries: 4
 
-# 国内直连 IP 穿透配置
-# 用于在开启科学上网 / TUN 虚拟网卡 (Fake-IP) 环境下，强制直连国内阿里云机房，防止 TLS 握手失败 (SSL 错误 35)
+# 国内直连 IP 穿透配置 (恋听网穿透防 Fake-IP 劫持)
 direct_ip: "47.238.53.179"
 auto_resolve_dns: true
 dns_servers:
@@ -37,8 +49,7 @@ dns_servers:
   - "119.29.29.29"
   - "114.114.114.114"
 
-# 默认最大下载集数限制 (防止误操作对数千集超长小说进行全本无限制下载)
-# 0 表示无限制（全本下载）；也可设为如 50、100
+# 默认最大下载集数限制 (0 表示无限制，全本下载)
 default_max_chapters: 0
 
 # Telegram 独立 Bot 运行配置 (可选，若使用 Hermes Agent 调用则无需单独配置)
